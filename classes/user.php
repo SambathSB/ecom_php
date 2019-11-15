@@ -50,14 +50,15 @@
       }
     }
 
-    public function insert($username, $email, $password) {
+    public function insert($username, $email, $password, $image) {
       try {
         $password = password_hash($password, PASSWORD_DEFAULT);
-        $query = "INSERT INTO users (username, email, password) VALUES (:username, :email, :password)";
+        $query = "INSERT INTO users (username, email, password, image) VALUES (:username, :email, :password, :image)";
           $stmt = $this->conn->prepare($query);
           $stmt->bindParam(":username", $username);
           $stmt->bindParam(":email", $email);
           $stmt->bindParam(":password", $password);
+          $stmt->bindParam(":image", $image);
           $stmt->execute();
           return $stmt;
       } catch(PDOException $e) {

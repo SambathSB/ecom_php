@@ -62,6 +62,7 @@
                     <th>ID</th>
                     <th>Username</th>
                     <th>Email</th>
+                    <th>Image</th>
                     <th>Action</th>
                   </tr>
                 </thead>
@@ -119,6 +120,14 @@
                 <input type="password" name="password" id="password" class="form-control" disabled>
               </div>
             </div>
+
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="">Image</label> <br>
+                <img id="userImage" src="" alt="" width="100">
+              </div>
+            </div>
+            
           </div>
         </form>
       </div>
@@ -178,7 +187,8 @@
               <div class="form-group">
                 <label for="image">Image</label>
                 <input type="file" name="image" id="image" class="form-control">
-                <span class="text-danger error_image"></span>
+                <span class="text-danger error_image"></span><br>
+                <img id="userImage" src="" alt="" width="100">
               </div>
             </div>
           </div>
@@ -242,6 +252,14 @@
               </div>
             </div>
             
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="image">Image</label>
+                <input type="file" name="edit_image" id="edit_image" class="form-control">
+                <span class="text-danger error_image"></span><br>
+                <img id="userImage" src="" alt="" width="100">
+              </div>
+            </div>
 
           </div>
         </form>
@@ -277,6 +295,9 @@
                   "<td>" + data[i].id + "</td>" +
                   "<td>" + data[i].username + "</td>" +
                   "<td>" + data[i].email + "</td>" +
+                  "<td>" + 
+                    "<img src='../../images/" + data[i].image + "' width='50'>" +
+                  "</td>" +
                   "<td>" + 
                     "<a href='#' class='btn btn-info view-user' data='View' user-id='" + data[i].id + "' data-toggle='modal' data-target='#modalViewUser'>" +
                       "<i class='fa fa-eye'> View</i>" +
@@ -319,9 +340,25 @@
             $("#username").val(data['username'])
             $("#email").val(data['email'])
             $("#password").val(data['password'])
+            $("#userImage").attr("src", "/a/admin/images/" + data['image'])
           }
         })
       })
+
+      function readURL(input) {
+        if (input.files && input.files[0]) {
+          var reader = new FileReader();
+          reader.onload = function (e) {
+            $('#userImage').attr('src', e.target.result);
+          }
+          reader.readAsDataURL(input.files[0]);
+        }
+      }
+
+      $("#image").change(function(){
+        $(".error_image").html("")
+        readURL(this);
+      });
 
       $("#btnAddUser").click(function() {
         var username = $('#formUser').find('input[name="username"]').val()
@@ -401,6 +438,7 @@
           errors['image'] = false
         } 
         else {
+          
           var imageName = image.name
           var imageExtension = image.name.split('.').pop().toLowerCase()
           var imageSize = image.size
@@ -435,6 +473,7 @@
           $('#formUser').find('input[name="email"]').val('')
           $('#formUser').find('input[name="password"]').val('')
           $('#formUser').find('input[name="confirm_password"]').val('')
+          $('#formUser').find('input[name="image"]').val('')
           $.ajax({
             url: "action.php",
             method: "POST",
@@ -444,6 +483,7 @@
             processData: false,
             data: data,
             success: function(data) {
+              console.log(data)
               $("table").DataTable().destroy()
               fetchUser()
               
@@ -472,6 +512,7 @@
             $('#formEditUser').find('input[name="edit_id"]').val(data['id'])
             $('#formEditUser').find('input[name="edit_username"]').val(data['username'])
             $('#formEditUser').find('input[name="edit_email"]').val(data['email'])
+            $("#userImage").attr("src", "/a/admin/images/" + data['image'])
           }
         })
       })

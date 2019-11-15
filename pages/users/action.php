@@ -18,13 +18,13 @@
     $username = $_POST['username'];
     $email = $_POST['email'];
     $password = $_POST['password'];
-    $user->insert($username, $email, $password);
-    echo "Inserted";
+
 
     $file = $_FILES['image'];
     if ($_FILES['image']['name'] != "") {
       $fileName = $_FILES['image']['name'];
       $fileTmpName = $_FILES['image']['tmp_name'];
+      $target = '../../images/' . basename($_FILES['image']['name']);
       $fileSize = $_FILES['image']['size'];
       $fileError = $_FILES['image']['error'];
       $fileType = $_FILES['image']['type'];
@@ -36,7 +36,7 @@
           if ($fileSize < 1000000) {
             $fileNameNew = uniqid('', true) . "." .$fileActualExtention;
             $fileDestination = '../../images/' . $fileNameNew;
-            move_uploaded_file($fileTmpName, $fileDestination);
+            move_uploaded_file($fileTmpName, $target);
           }
           else {
             print_r("Your file is too big!");
@@ -50,6 +50,10 @@
         print_r("You cannot upload files of this type!");
       }
     }
+
+    $image = $_FILES['image']['name'];
+    echo $image;
+    $user->insert($username, $email, $password, $image);
   }
   
   if (array_key_exists("actionView", $_GET)) {
