@@ -196,6 +196,14 @@
           </div>
           <!-- /.col -->
         </div>
+        
+        <div class="row">
+          <form action="" method="POST" id="form-submit" enctype="multipart/form-data">
+            <input type="text" name="name" id="name">
+            <input type="file" name="image" id="image">
+            <input type="button" id="add" name="add" id="add" value="Add">
+          </form>
+        </div>
         <!-- /.row -->
       </section>
       <!-- /.content -->
@@ -256,4 +264,34 @@
 
   <!-- footer -->
   <?php require("includes/footer.php") ?>
+
+  <script>
+    $("document").ready(function() {
+      $("#add").on("click", function() {
+        var name = $('form').find('input[name="name"]').val()
+        var image = $('form')[0]
+        var data = new FormData(image)
+        data.append('image', $('input[type=file]')[0].files[0]);
+        data.append('name', name)
+        console.log(data)
+        $.ajax({
+          url: "upload.php",
+          method: "POST",
+          dataType: 'text',
+          cache: false,
+          contentType: false,
+          processData: false,
+          data: data,
+          
+          success: function(data) {
+            alert("Hi")
+            alert(data);
+          },
+          error: function() {
+            alert("Error")
+          }
+        })
+      })
+    })
+  </script>
 </html>

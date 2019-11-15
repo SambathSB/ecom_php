@@ -20,6 +20,9 @@
   <script>
     $.widget.bridge("uibutton", $.ui.button)
   </script>
+  
+
+  
   <script src="<?php $_SERVER['DOCUMENT_ROOT'] ?>/a/admin/js/bootstrap.bundle.min.js"></script>
   <script src="<?php $_SERVER['DOCUMENT_ROOT'] ?>/a/admin/js/Chart.min.js"></script>
   <script src="<?php $_SERVER['DOCUMENT_ROOT'] ?>/a/admin/js/sparkline.js"></script>
@@ -37,7 +40,11 @@
   <script src="<?php $_SERVER['DOCUMENT_ROOT'] ?>/a/admin/js/demo.js"></script>
   <script src="<?php $_SERVER['DOCUMENT_ROOT'] ?>/a/admin/js/sweetalert2.all.minjs"></script>
   <script src="<?php $_SERVER['DOCUMENT_ROOT'] ?>/a/admin/js/sweetalert2.min.js"></script>
-
+  <script src="<?php $_SERVER['DOCUMENT_ROOT'] ?>/a/admin/js/jquery.dataTables.js"></script>
+  <script src="<?php $_SERVER['DOCUMENT_ROOT'] ?>/a/admin/js/dataTables.bootstrap4.min.js"></script>
+  <script src="<?php $_SERVER['DOCUMENT_ROOT'] ?>/a/admin/js/dropzone.js"></script>
+  
+  
   <script>
     $(document).ready(function() {
       $("#btnAdd").click(function() {  
