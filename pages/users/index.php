@@ -124,7 +124,7 @@
             <div class="col-md-6">
               <div class="form-group">
                 <label for="">Image</label> <br>
-                <img id="userImage" src="" alt="" width="100">
+                <img id="viewUserImage" src="" alt="" width="100">
               </div>
             </div>
             
@@ -248,16 +248,16 @@
               <div class="form-group">
                 <label for="confirm_password">Confirm Password</label>
                 <input type="password" name="edit_confirm_password" id="edit_confirm_password" class="form-control">
-                <span class="text-danger error_confirm_password"></span>
+                <span class="text-danger error_edit_confirm_password"></span>
               </div>
             </div>
             
             <div class="col-md-6">
               <div class="form-group">
-                <label for="image">Image</label>
+                <label for="edit_image">Image</label>
                 <input type="file" name="edit_image" id="edit_image" class="form-control">
-                <span class="text-danger error_image"></span><br>
-                <img id="userImage" src="" alt="" width="100">
+                <span class="text-danger error_edit_image"></span><br>
+                <img id="editUserImage" src="" alt="" width="100">
               </div>
             </div>
 
@@ -340,7 +340,7 @@
             $("#username").val(data['username'])
             $("#email").val(data['email'])
             $("#password").val(data['password'])
-            $("#userImage").attr("src", "/a/admin/images/" + data['image'])
+            $("#viewUserImage").attr("src", "/a/admin/images/" + data['image'])
           }
         })
       })
@@ -357,6 +357,21 @@
 
       $("#image").change(function(){
         $(".error_image").html("")
+        readURL(this);
+      });
+
+      function readURL(input) {
+        if (input.files && input.files[0]) {
+          var reader = new FileReader();
+          reader.onload = function (e) {
+            $('#editUserImage').attr('src', e.target.result);
+          }
+          reader.readAsDataURL(input.files[0]);
+        }
+      }
+
+      $("#edit_image").change(function(){
+        $(".error_edit_image").html("")
         readURL(this);
       });
 
@@ -464,8 +479,8 @@
         data.append('email', email)
         data.append('password', password)
         data.append('confirmPassword', confirmPassword)
-        data.append('actionCreate', actionCreate)
         data.append('image', image)
+        data.append('actionCreate', actionCreate)
         
         if (errors['username'] && errors['email'] && errors['password'] && errors['confirm_password'] && errors['image']) {
           $('#modalAddUser').modal('toggle')
@@ -512,7 +527,8 @@
             $('#formEditUser').find('input[name="edit_id"]').val(data['id'])
             $('#formEditUser').find('input[name="edit_username"]').val(data['username'])
             $('#formEditUser').find('input[name="edit_email"]').val(data['email'])
-            $("#userImage").attr("src", "/a/admin/images/" + data['image'])
+           
+            $("#editUserImage").attr("src", "/a/admin/images/" + data['image'])
           }
         })
       })
@@ -523,7 +539,8 @@
         var email = $('#formEditUser').find('input[name="edit_email"]').val()
         var password = $('#formEditUser').find('input[name="edit_password"]').val()
         var confirmPassword = $('#formEditUser').find('input[name="edit_confirm_password"]').val()
-        var actionEdit = $(this).attr('update-user')
+        var image = ($('input[name=edit_image]')[0].files[0])
+        var actionEdit = "Edit"
 
         errors = []
 
@@ -568,41 +585,84 @@
             $(".error_edit_password").html("Password must be 8 chars or more for you password")
             errors['password'] = false
             $('#formEditUser').find('input[name="edit_confirm_password"]').val('')
-            $(".error_confirm_password").html("")
+            $(".error_edit_confirm_password").html("")
           } 
           else {
             $(".error_edit_password").html("")
             errors['password'] = true
             if (!confirmPassword) {
-              $(".error_confirm_password").html("Confirm your password")
+              $(".error_edit_confirm_password").html("Confirm your password")
               $('#formEditUser').find('input[name="edit_confirm_password"]').val('')
               errors['confirm_password'] = false
             }
             else {
               if (confirmPassword != password) {
-                $(".error_confirm_password").html("Those passwords didn't match. Try again.")
+                $(".error_edit_confirm_password").html("Those passwords didn't match. Try again.")
                 $('#formEditUser').find('input[name="edit_confirm_password"]').val('')
                 errors['confirm_password'] = false
               }
               else {
-                $(".error_confirm_password").html("")
+                $(".error_edit_confirm_password").html("")
                 errors['confirm_password'] = true
               }
             }
           }
         }
 
-        if (errors['username'] && errors['email'] && errors['password'] && errors['confirm_password']) {
+        if (!image) {
+          $(".error_edit_image").html("please select image")
+          errors['image'] = false
+        } 
+        else {
+          
+          var imageName = image.name
+          var imageExtension = image.name.split('.').pop().toLowerCase()
+          var imageSize = image.size
+          if (jQuery.inArray(imageExtension, ['gif', 'jpg', 'png', 'jpeg']) != -1) {
+            if (imageSize < 1000000) {
+              $(".error_edit_image").html("")
+              errors['image'] = true
+            }
+            else {
+              $(".error_edit_image").html("Your file is too big!")
+              errors['image'] = false
+            }
+          }
+          else {
+            $(".error_edit_image").html("You cannot upload files of this type!")
+            errors['image'] = false
+          }
+        }
+
+        var form = $('#formEditUser')[0]
+        var data = new FormData(form)
+        
+        data.append('id', id)
+        data.append('username', username)
+        data.append('email', email)
+        data.append('password', password)
+        data.append('confirmPassword', confirmPassword)
+        data.append('image', image)
+        data.append('actionEdit', actionEdit)
+
+        if (errors['username'] && errors['email'] && errors['password'] && errors['confirm_password'] && errors['image']) {
           $('#modalEditUser').modal('toggle')
           $('#formEditUser').find('input[name="edit_username"]').val('')
           $('#formEditUser').find('input[name="edit_email"]').val('')
           $('#formEditUser').find('input[name="edit_password"]').val('')
           $('#formEditUser').find('input[name="edit_confirm_password"]').val('')
+          $('#formEditUser').find('input[name="edit_image"]').val('')
+
           $.ajax({
             url: "action.php",
             method: "POST",
-            data: {username: username, email: email, password: password, actionEdit: actionEdit, id: id},
+            dataType: 'text',
+            cache: false,
+            contentType: false,
+            processData: false,
+            data: data,
             success: function(data) {
+              console.log(data)
               $("table").DataTable().destroy()
               fetchUser()
               Swal.fire({
@@ -667,10 +727,14 @@
       $(".error_username").html("")
       $(".error_email").html("")
       $(".error_password").html("")
+      $(".error_image").html("")
 
       $(".error_edit_username").html("")
       $(".error_edit_email").html("")
       $(".error_edit_password").html("")
+
+      $('#formUser').find('input[name="image"]').val('')
+      $('#formEditUser').find('input[name="edit_image"]').val('')
     })
 
   })
