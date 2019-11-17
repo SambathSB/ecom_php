@@ -11,6 +11,92 @@
   .text-danger {
     font-size: 16px;
   }
+
+  .box-image {
+    width: 100px;
+    height: 100px;
+    border: 1px solid #ccc;
+    background-image: url("../../images/default_bg.png");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
+    position: relative;
+  }
+
+  .box-image input {
+    width: 100px;
+    height: 100px;
+    opacity: 0;
+    cursor: pointer;
+  }
+
+  .box-delete-image {
+    width: 20px;
+    height: 20px;
+    background-image: url("../../images/button_delete.jpg");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    cursor: pointer;
+  }
+
+  .loading-image {
+    width: 20px;
+    height: 20px;
+    background-image: url("../../images/loading.gif");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
+    position: absolute;
+    top: 40px;
+    left: 40px;
+  }
+
+  .editBox-image {
+    width: 100px;
+    height: 100px;
+    border: 1px solid #ccc;
+    background-image: url("../../images/default_bg.png");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
+    position: relative;
+  }
+
+  .editBox-image input {
+    width: 100px;
+    height: 100px;
+    opacity: 0;
+    cursor: pointer;
+  }
+
+  .editBox-delete-image {
+    width: 20px;
+    height: 20px;
+    background-image: url("../../images/button_delete.jpg");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    cursor: pointer;
+  }
+
+  .editLoading-image {
+    width: 20px;
+    height: 20px;
+    background-image: url("../../images/loading.gif");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
+    position: absolute;
+    top: 40px;
+    left: 40px;
+  }
 </style>
 
 <div class="wrapper">
@@ -139,12 +225,12 @@
 </div>
 
 <!-- Add User -->
-<div class="modal fade" id="modalAddUser" style="display: none;" aria-hidden="true">
+<div class="modal fade" id="modalAddUser" style="display: none;" aria-hidden="true" data-backdrop="static" data-keyboard="false">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <div class="modal-header">
         <h4 class="modal-title">Create New User</h4>
-        <button type="button" id="modalClose" class="close" data-dismiss="modal" aria-label="Close">
+        <button type="button" id="modalClose" class="close btnCloseUser" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">×</span>
         </button>
       </div>
@@ -183,12 +269,11 @@
               </div>
             </div>
 
-            <div class="col-md-6">
-              <div class="form-group">
-                <label for="image">Image</label>
-                <input type="file" name="image" id="image" class="form-control">
+            <div class="">
+              <label for="">Image</label>
+              <div class="form-group box-image">
+                <input type="file" name="image" id="image" class="image" class="form-control">
                 <span class="text-danger error_image"></span><br>
-                <img id="userImage" src="" alt="" width="100">
               </div>
             </div>
           </div>
@@ -207,12 +292,12 @@
 </div>
 
 <!-- Edit User -->
-<div class="modal fade" id="modalEditUser" style="display: none;" aria-hidden="true">
+<div class="modal fade" id="modalEditUser" style="display: none;" aria-hidden="true" data-backdrop="static" data-keyboard="false">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <div class="modal-header">
         <h4 class="modal-title">Edit User</h4>
-        <button type="button" id="modalClose" class="close" data-dismiss="modal" aria-label="Close">
+        <button type="button" id="modalClose" class="close btnCloseUser" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">×</span>
         </button>
       </div>
@@ -252,12 +337,20 @@
               </div>
             </div>
             
-            <div class="col-md-6">
+            <!-- <div class="col-md-6">
               <div class="form-group">
                 <label for="edit_image">Image</label>
                 <input type="file" name="edit_image" id="edit_image" class="form-control">
                 <span class="text-danger error_edit_image"></span><br>
                 <img id="editUserImage" src="" alt="" width="100">
+              </div>
+            </div> -->
+
+            <div class="">
+              <label for="">Image</label>
+              <div class="form-group box-image">
+                <input type="file" name="image" id="image" class="image" class="form-control">
+                <span class="text-danger error_edit_image"></span><br>
               </div>
             </div>
 
@@ -326,7 +419,10 @@
       })
     }
 
+    
+
     $(function() {
+
       $(document).on("click", ".view-user", function() {
         var id = $(this).attr('user-id')
         var actionView = "View"
@@ -345,35 +441,31 @@
         })
       })
 
-      function readURL(input) {
+      function readURLAdd(input) {
         if (input.files && input.files[0]) {
+          var deleteIcon = '<div class="box-delete-image"></div>'
+          var loading = '<div class="loading-image"></div>'
+          $('.box-image').append(loading)
           var reader = new FileReader();
           reader.onload = function (e) {
-            $('#userImage').attr('src', e.target.result);
+            $('.box-image').css({"background-image": "url(" + e.target.result + ")"})
+            $('.box-image').append(deleteIcon)
+            $('.box-image').find('.loading-image').remove()
           }
-          reader.readAsDataURL(input.files[0]);
+          reader.readAsDataURL(input.files[0])
         }
       }
 
-      $("#image").change(function(){
+      $(".image").change(function(){
         $(".error_image").html("")
-        readURL(this);
-      });
-
-      function readURL(input) {
-        if (input.files && input.files[0]) {
-          var reader = new FileReader();
-          reader.onload = function (e) {
-            $('#editUserImage').attr('src', e.target.result);
-          }
-          reader.readAsDataURL(input.files[0]);
-        }
-      }
-
-      $("#edit_image").change(function(){
         $(".error_edit_image").html("")
-        readURL(this);
+        readURLAdd(this);
       });
+
+      $(".box-image").on("click", ".box-delete-image", function() {
+        $('.box-image').css({"background-image": "url(../../images/default_bg.png)"})
+        $('.box-image').find('.box-delete-image').remove()
+      })
 
       $("#btnAddUser").click(function() {
         var username = $('#formUser').find('input[name="username"]').val()
@@ -489,6 +581,9 @@
           $('#formUser').find('input[name="password"]').val('')
           $('#formUser').find('input[name="confirm_password"]').val('')
           $('#formUser').find('input[name="image"]').val('')
+          $('.box-image').find('.box-delete-image').remove()
+          $('.box-image').css({"background-image": "url(../../images/default_bg.png)"})
+
           $.ajax({
             url: "action.php",
             method: "POST",
@@ -498,7 +593,6 @@
             processData: false,
             data: data,
             success: function(data) {
-              console.log(data)
               $("table").DataTable().destroy()
               fetchUser()
               
@@ -517,7 +611,8 @@
       $(document).on("click", ".edit-user", function() {
         var id = $(this).attr('user-id')
         var actionView = $(this).attr("data")
-        $('#formEditUser').find('input[name="edit_username"]').val("Hi")
+        var deleteIcon = '<div class="box-delete-image"></div>'
+
         $.ajax({
           url: "action.php",
           method: "GET",
@@ -527,6 +622,9 @@
             $('#formEditUser').find('input[name="edit_id"]').val(data['id'])
             $('#formEditUser').find('input[name="edit_username"]').val(data['username'])
             $('#formEditUser').find('input[name="edit_email"]').val(data['email'])
+            $('.box-image').css({"background-image": "url(../../images/" + data['image'] + ")"})
+            // $('#formEditUser').find('input[type="file"]').val(data['image'])
+            $('.box-image').append(deleteIcon)
            
             $("#editUserImage").attr("src", "/a/admin/images/" + data['image'])
           }
@@ -539,8 +637,9 @@
         var email = $('#formEditUser').find('input[name="edit_email"]').val()
         var password = $('#formEditUser').find('input[name="edit_password"]').val()
         var confirmPassword = $('#formEditUser').find('input[name="edit_confirm_password"]').val()
-        var image = ($('input[name=edit_image]')[0].files[0])
+        var image = $('#formEditUser').find('input[name=image]')[0].files[0]
         var actionEdit = "Edit"
+        console.log(image)
 
         errors = []
 
@@ -614,7 +713,6 @@
           errors['image'] = false
         } 
         else {
-          
           var imageName = image.name
           var imageExtension = image.name.split('.').pop().toLowerCase()
           var imageSize = image.size
@@ -735,6 +833,8 @@
 
       $('#formUser').find('input[name="image"]').val('')
       $('#formEditUser').find('input[name="edit_image"]').val('')
+      $('.box-image').css({"background-image": "url(../../images/default_bg.png)"})
+      $('.box-image').find('.box-delete-image').remove()
     })
 
   })
